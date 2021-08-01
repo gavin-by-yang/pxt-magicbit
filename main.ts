@@ -16,7 +16,7 @@ enum Offset {
     FOUR = 3
 }
 
-//% color="#EE6A50" weight=10 icon="\uf013"
+//% color="#EE6A50" weight=10 icon="\uf1ae" block="知创科技"
 namespace magicbit {
     const PCA9685_ADDRESS = 0x40
     const MODE1 = 0x00
@@ -413,7 +413,7 @@ namespace magicbit {
     export function MotorStop(index: Motors): void {
         MotorRun(index, 0);
     }
-
+	
     //% blockId=magicbit_stop_all block="Motor Stop All"
     //% weight=79
     //% blockGap=50
@@ -445,4 +445,18 @@ namespace magicbit {
 	 sensors.board_rus04_rgb(DigitalPin.P16, offset, 0, rgb, effect);
 	}
 	
+	   /**
+		 * Lights Control
+		 * @param onoff Lights Control; eg: 0
+	    */	
+	    //% blockId=magicbit_OnBoardLights_all block="OnBoard Lights All"
+	    //% weight=75
+	    //% blockGap=50
+	    //% onoff.min=0 onoff.max=1
+	    //% inlineInputMode=inline
+	    export function OnBoardLightsAll(onoff: number): void {
+		for (let idx = 1; idx <= 4; idx++) {
+		    sensors.board_rus04_rgb(DigitalPin.P16, idx, 0, 0, 0);
+		}
+	    }
 }
