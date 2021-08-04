@@ -426,37 +426,37 @@ namespace magicbit {
         }
     }
 
-	//% blockId="motorbit_rus04" block="On-board Ultrasonic part %index show color %rgb effect %effect" 
-	//% weight=78
-	export function motorbit_rus04(index: RgbUltrasonics, rgb: RgbColors, effect: ColorEffect): void {
-	    sensors.board_rus04_rgb(DigitalPin.P16, 4, index, rgb, effect);
-	}
-    
-	//% blockId=Ultrasonic_reading_distance block="On-board Ultrasonic reading distance"
-	//% weight=77
-	export function Ultrasonic_reading_distance(): number {
-	    return sensors.Ultrasonic(DigitalPin.P2);
-	}
-
-
-	//% blockId=Setting_the_on_board_lights block="Setting the on-board lights %index color %rgb Effect %effect"
-	//% weight=76
-	export function Setting_the_on_board_lights(offset: Offset,rgb: RgbColors, effect: rgb_ColorEffect): void {
-	 sensors.board_rus04_rgb(DigitalPin.P16, offset, 0, rgb, effect);
-	}
-	
-	   /**
-		 * Lights Control
-		 * @param onoff Lights Control; eg: 0
-	    */	
-	    //% blockId=magicbit_OnBoardLights_all block="OnBoard Lights All"
-	    //% weight=75
-	    //% blockGap=50
-	    //% onoff.min=0 onoff.max=1
-	    //% inlineInputMode=inline
-	    export function OnBoardLightsAll(onoff: number): void {
-		for (let idx = 1; idx <= 4; idx++) {
-		    sensors.board_rus04_rgb(DigitalPin.P16, idx, 0, 0, 0);
-		}
-	    }
+//	//% blockId="motorbit_rus04" block="On-board Ultrasonic part %index show color %rgb effect %effect" 
+//	//% weight=78
+//	export function motorbit_rus04(index: RgbUltrasonics, rgb: RgbColors, effect: ColorEffect): void {
+//	    sensors.board_rus04_rgb(DigitalPin.P16, 4, index, rgb, effect);
+//	}
+//    
+//	//% blockId=Ultrasonic_reading_distance block="On-board Ultrasonic reading distance"
+//	//% weight=77
+//	export function Ultrasonic_reading_distance(): number {
+//	    return sensors.Ultrasonic(DigitalPin.P2);
+//	}
+//
+//
+//	//% blockId=Setting_the_on_board_lights block="Setting the on-board lights %index color %rgb Effect %effect"
+//	//% weight=76
+//	export function Setting_the_on_board_lights(offset: Offset,rgb: RgbColors, effect: rgb_ColorEffect): void {
+//	 sensors.board_rus04_rgb(DigitalPin.P16, offset, 0, rgb, effect);
+//	}
+//	
+//	   /**
+//		 * Lights Control
+//		 * @param onoff Lights Control; eg: 0
+//	    */	
+//	    //% blockId=magicbit_OnBoardLights_all block="OnBoard Lights All"
+//	    //% weight=75
+//	    //% blockGap=50
+//	    //% onoff.min=0 onoff.max=1
+//	    //% inlineInputMode=inline
+//	    export function OnBoardLightsAll(onoff: number): void {
+//		for (let idx = 1; idx <= 4; idx++) {
+//		    sensors.board_rus04_rgb(DigitalPin.P16, idx, 0, 0, 0);
+//		}
+//	    }
 }
