@@ -466,7 +466,7 @@ namespace magicbit {
 	
 	
 	
-	
+    let distanceBuf = 0;	
 	
     function Ultrasonic(pin: DigitalPin): number {
         pins.setPull(pin, PinPullMode.PullNone);
