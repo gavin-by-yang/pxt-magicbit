@@ -459,4 +459,285 @@ namespace magicbit {
 //		    sensors.board_rus04_rgb(DigitalPin.P16, idx, 0, 0, 0);
 //		}
 //	    }
+	
+
+	
+	
+	
+	
+	
+	
+	
+    function Ultrasonic(pin: DigitalPin): number {
+        pins.setPull(pin, PinPullMode.PullNone);
+        pins.digitalWritePin(pin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(pin, 1);
+        control.waitMicros(50);
+        pins.digitalWritePin(pin, 0);
+	    control.waitMicros(1000);
+        while(!pins.digitalReadPin(pin));
+        // read pulse
+        let d = pins.pulseIn(pin, PulseValue.High, 25000);
+        let ret = d;
+        // filter timeout spikes
+        if (ret == 0 && distanceBuf != 0) {
+            ret = distanceBuf;
+        }
+        distanceBuf = d;
+        //return d;
+        return Math.floor(ret * 9 / 6 / 58);
+        //return Math.floor(ret / 40 + (ret / 800));
+        // Correction
+
+    }
+
+    function RgbDisplay(indexstart: number, indexend: number, rgb: RgbColors): void {
+        for (let i = indexstart; i <= indexend; i++) {
+            emRGBLight.setPixelColor(i, rgb);
+        }
+        emRGBLight.show();
+    }
+    
+    function board_RgbDisplay(indexstart: number, indexend: number, rgb: RgbColors): void {
+        for (let i = indexstart; i <= indexend; i++) {
+            board_emRGBLight.setPixelColor(i, rgb);
+        }
+        board_emRGBLight.show();
+    }
+
+    function rus04_rgb(pin: DigitalPin, offset: number, index: number, rgb: number, effect: number): void {
+        let start = 0, end = 0;
+        if (!emRGBLight) {
+            emRGBLight = EMRGBLight.create(pin, 10, EMRGBPixelMode.RGB)
+        }
+        //if(offset >= 4 || offset == 0){
+            if (index == RgbUltrasonics.Left) {
+                start = 0;
+                end = 2;
+            } else if (index == RgbUltrasonics.Right) {
+                start = 3;
+                end = 5;
+            } else if (index == RgbUltrasonics.All) {
+                start = 0;
+                end = 5;
+            }
+       // }
+        start += offset;
+        end += offset;
+        switch (effect) {
+            case ColorEffect.None:
+                emRGBLight.setBrightness(255);
+                RgbDisplay(start, end, rgb);
+                break;
+            case ColorEffect.Breathing:
+                for (let i = 0; i < 255; i += 2) {
+                    emRGBLight.setBrightness(i);
+                    RgbDisplay(start, end, rgb);
+                    //basic.pause((255 - i)/2);
+                    basic.pause((i < 50) ? 10 : (255 / i));
+                }
+                for (let i = 255; i > 0; i -= 2) {
+                    emRGBLight.setBrightness(i);
+                    RgbDisplay(start, end, rgb);
+                    basic.pause((i < 50) ? 10 : (255 / i));
+                }
+                break;
+            case ColorEffect.Rotate:
+                emRGBLight.setBrightness(255);
+                for (let i = 0; i < 4; i++) {
+                    emRGBLight.setPixelColor(start, rgb);
+                    emRGBLight.setPixelColor(start + 1, 0);
+                    emRGBLight.setPixelColor(start + 2, 0);
+                    if (index == RgbUltrasonics.All) {
+                        emRGBLight.setPixelColor(end - 2, rgb);
+                        emRGBLight.setPixelColor(end - 1, 0);
+                        emRGBLight.setPixelColor(end, 0);
+                    }
+                    emRGBLight.show();
+                    basic.pause(150);
+                    emRGBLight.setPixelColor(start, 0);
+                    emRGBLight.setPixelColor(start + 1, rgb);
+                    emRGBLight.setPixelColor(start + 2, 0);
+                    if (index == RgbUltrasonics.All) {
+                        emRGBLight.setPixelColor(end - 2, 0);
+                        emRGBLight.setPixelColor(end - 1, rgb);
+                        emRGBLight.setPixelColor(end, 0);
+                    }
+                    emRGBLight.show();
+                    basic.pause(150);
+                    emRGBLight.setPixelColor(start, 0);
+                    emRGBLight.setPixelColor(start + 1, 0);
+                    emRGBLight.setPixelColor(start + 2, rgb);
+                    if (index == RgbUltrasonics.All) {
+                        emRGBLight.setPixelColor(end - 2, 0);
+                        emRGBLight.setPixelColor(end - 1, 0);
+                        emRGBLight.setPixelColor(end, rgb);
+                    }
+                    emRGBLight.show();
+                    basic.pause(150);
+                    emRGBLight.setBrightness(0);
+                }
+                RgbDisplay(4, 9, 0);
+                break;
+            case ColorEffect.Flash:
+                for (let i = 0; i < 3; i++) {
+                    emRGBLight.setBrightness(255);
+                    RgbDisplay(start, end, rgb);
+                    basic.pause(100);
+                    RgbDisplay(start, end, 0);
+                    basic.pause(50);
+                }
+                break;
+        }
+    }
+	
+    function board_rus04_rgb(pin: DigitalPin, offset: number, index: number, rgb: number, effect: number): void {
+        let start = 0, end = 0;
+        if (!board_emRGBLight) {
+            board_emRGBLight = EMRGBLight.create(pin, 10, EMRGBPixelMode.RGB)
+        }
+        if(offset >= 4){
+            if (index == RgbUltrasonics.Left) {
+                start = 0;
+                end = 2;
+            } else if (index == RgbUltrasonics.Right) {
+                start = 3;
+                end = 5;
+            } else if (index == RgbUltrasonics.All) {
+                start = 0;
+                end = 5;
+            }
+        }
+        start += offset;
+        end += offset;
+        switch (effect) {
+            case ColorEffect.None:
+                board_emRGBLight.setBrightness(255);
+                board_RgbDisplay(start, end, rgb);
+                break;
+            case ColorEffect.Breathing:
+                for (let i = 0; i < 255; i += 2) {
+                    board_emRGBLight.setBrightness(i);
+                    board_RgbDisplay(start, end, rgb);
+                    //basic.pause((255 - i)/2);
+                    basic.pause((i < 50) ? 10 : (255 / i));
+                }
+                for (let i = 255; i > 0; i -= 2) {
+                    board_emRGBLight.setBrightness(i);
+                    board_RgbDisplay(start, end, rgb);
+                    basic.pause((i < 50) ? 10 : (255 / i));
+                }
+                break;
+            case ColorEffect.Rotate:
+                board_emRGBLight.setBrightness(255);
+                for (let i = 0; i < 4; i++) {
+                    board_emRGBLight.setPixelColor(start, rgb);
+                    board_emRGBLight.setPixelColor(start + 1, 0);
+                    board_emRGBLight.setPixelColor(start + 2, 0);
+                    if (index == RgbUltrasonics.All) {
+                        board_emRGBLight.setPixelColor(end - 2, rgb);
+                        board_emRGBLight.setPixelColor(end - 1, 0);
+                        board_emRGBLight.setPixelColor(end, 0);
+                    }
+                    board_emRGBLight.show();
+                    basic.pause(150);
+                    board_emRGBLight.setPixelColor(start, 0);
+                    board_emRGBLight.setPixelColor(start + 1, rgb);
+                    board_emRGBLight.setPixelColor(start + 2, 0);
+                    if (index == RgbUltrasonics.All) {
+                        board_emRGBLight.setPixelColor(end - 2, 0);
+                        board_emRGBLight.setPixelColor(end - 1, rgb);
+                        board_emRGBLight.setPixelColor(end, 0);
+                    }
+                    board_emRGBLight.show();
+                    basic.pause(150);
+                    board_emRGBLight.setPixelColor(start, 0);
+                    board_emRGBLight.setPixelColor(start + 1, 0);
+                    board_emRGBLight.setPixelColor(start + 2, rgb);
+                    if (index == RgbUltrasonics.All) {
+                        board_emRGBLight.setPixelColor(end - 2, 0);
+                        board_emRGBLight.setPixelColor(end - 1, 0);
+                        board_emRGBLight.setPixelColor(end, rgb);
+                    }
+                    board_emRGBLight.show();
+                    basic.pause(150);
+                    board_emRGBLight.setBrightness(0);
+                }
+                board_RgbDisplay(4, 9, 0);
+                break;
+            case ColorEffect.Flash:
+                for (let i = 0; i < 3; i++) {
+                    board_emRGBLight.setBrightness(255);
+                    board_RgbDisplay(start, end, rgb);
+                    basic.pause(100);
+                    board_RgbDisplay(start, end, 0);
+                    basic.pause(50);
+                }
+                break;
+        }
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//% blockId=Ultrasonic_reading_distance block="On-board Ultrasonic reading distance"
+	//% weight=77
+	export function Ultrasonic_reading_distance(): number {
+	    return Ultrasonic(DigitalPin.P2);
+	}
+
+
+	//% blockId=Setting_the_on_board_lights block="Setting the on-board lights %index color %rgb Effect %effect"
+	//% weight=76
+	export function Setting_the_on_board_lights(offset: Offset,rgb: RgbColors, effect: rgb_ColorEffect): void {
+	 	board_rus04_rgb(DigitalPin.P16, offset, 0, rgb, effect);
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
