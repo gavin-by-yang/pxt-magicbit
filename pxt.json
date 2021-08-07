@@ -4,8 +4,7 @@
     "description": "Emakefun magicbit expansion board",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "neopixel": "github:microsoft/pxt-neopixel#v0.7.3"
+        "core": "*"
     },
     "files": [
         "README.md",
